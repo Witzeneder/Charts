@@ -199,8 +199,8 @@ open class YAxisRendererRadarChart: YAxisRenderer
                 point: CGPoint(x: p.x + xOffset, y: p.y - labelLineHeight),
                 align: alignment,
                 attributes: [
-                    NSAttributedStringKey.font: labelFont,
-                    NSAttributedStringKey.foregroundColor: labelTextColor
+                    NSAttributedString.Key.font: labelFont,
+                    NSAttributedString.Key.foregroundColor: labelTextColor
                 ])
         }
     }
@@ -213,7 +213,7 @@ open class YAxisRendererRadarChart: YAxisRenderer
             let data = chart.data
             else { return }
         
-        var limitLines = yAxis.limitLines
+        var limitLines = yAxis.limitLines 
         
         if limitLines.count == 0
         {

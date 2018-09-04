@@ -93,7 +93,7 @@ extension NSUIView
 internal func accessibilityPostLayoutChangedNotification(withElement element: Any? = nil)
 {
     guard let validElement = element else { return }
-    NSAccessibilityPostNotification(validElement, .layoutChanged)
+    NSAccessibility.post(element: validElement, notification: .layoutChanged)
 }
 
 internal func accessibilityPostScreenChangedNotification(withElement element: Any? = nil)
@@ -144,7 +144,7 @@ open class NSUIAccessibilityElement: NSAccessibilityElement
 
         set
         {
-            let bounds = NSAccessibilityFrameInView(containerView, newValue)
+            let bounds = NSAccessibility.screenRect(fromView: containerView, rect: newValue)
 
             // This works, but won't auto update if the window is resized or moved.
             // setAccessibilityFrame(bounds)
