@@ -4,49 +4,49 @@ import Foundation
 
 internal func accessibilityPostLayoutChangedNotification(withElement element: Any? = nil)
 {
-    UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, element)
+    UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: element)
 }
 
 internal func accessibilityPostScreenChangedNotification(withElement element: Any? = nil)
 {
-    UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, element)
+    UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: element)
 }
 
 /// A simple abstraction over UIAccessibilityElement and NSAccessibilityElement.
 open class NSUIAccessibilityElement: UIAccessibilityElement
 {
     private let containerView: UIView
-
+    
     final var isHeader: Bool = false
-    {
+        {
         didSet
         {
-            accessibilityTraits = isHeader ? UIAccessibilityTraitHeader : UIAccessibilityTraitNone
+            accessibilityTraits = isHeader ? UIAccessibilityTraits.header : UIAccessibilityTraits.none
         }
     }
-
+    
     final var isSelected: Bool = false
         {
         didSet
         {
-            accessibilityTraits = isSelected ? UIAccessibilityTraitSelected : UIAccessibilityTraitNone
+            accessibilityTraits = isSelected ? UIAccessibilityTraits.selected : UIAccessibilityTraits.none
         }
     }
-
+    
     override init(accessibilityContainer container: Any)
     {
         // We can force unwrap since all chart views are subclasses of UIView
         containerView = container as! UIView
         super.init(accessibilityContainer: container)
     }
-
+    
     override open var accessibilityFrame: CGRect
-    {
+        {
         get
         {
             return super.accessibilityFrame
         }
-
+        
         set
         {
             super.accessibilityFrame = containerView.convert(newValue, to: UIScreen.main.coordinateSpace)
@@ -62,23 +62,23 @@ extension NSUIView
     {
         return nil
     }
-
+    
     public final override var isAccessibilityElement: Bool
     {
         get { return false } // Return false here, so we can make individual elements accessible
         set { }
     }
-
+    
     open override func accessibilityElementCount() -> Int
     {
         return accessibilityChildren()?.count ?? 0
     }
-
+    
     open override func accessibilityElement(at index: Int) -> Any?
     {
         return accessibilityChildren()?[index]
     }
-
+    
     open override func index(ofAccessibilityElement element: Any) -> Int
     {
         guard let axElement = element as? NSUIAccessibilityElement else { return NSNotFound }
@@ -105,50 +105,50 @@ internal func accessibilityPostScreenChangedNotification(withElement element: An
 open class NSUIAccessibilityElement: NSAccessibilityElement
 {
     private let containerView: NSView
-
+    
     final var isHeader: Bool = false
-    {
+        {
         didSet
         {
             setAccessibilityRole(isHeader ? .staticText : .none)
         }
     }
-
+    
     final var isSelected: Bool = false
-    {
+        {
         didSet
         {
             setAccessibilitySelected(isSelected)
         }
     }
-
+    
     open var accessibilityLabel: String
-    {
+        {
         get
         {
             return accessibilityLabel() ?? ""
         }
-
+        
         set
         {
             setAccessibilityLabel(newValue)
         }
     }
-
+    
     open var accessibilityFrame: NSRect
-    {
+        {
         get
         {
             return accessibilityFrame()
         }
-
+        
         set
         {
             let bounds = NSAccessibility.screenRect(fromView: containerView, rect: newValue)
-
+            
             // This works, but won't auto update if the window is resized or moved.
             // setAccessibilityFrame(bounds)
-
+            
             // using FrameInParentSpace allows for automatic updating of frame when windows are moved and resized.
             // However, there seems to be a bug right now where using it causes an offset in the frame.
             // This is a slightly hacky workaround that calculates the offset and removes it from frame calculation.
@@ -163,14 +163,14 @@ open class NSUIAccessibilityElement: NSAccessibilityElement
             setAccessibilityFrameInParentSpace(rect)
         }
     }
-
+    
     init(accessibilityContainer container: Any)
     {
         // We can force unwrap since all chart views are subclasses of NSView
         containerView = container as! NSView
-
+        
         super.init()
-
+        
         setAccessibilityParent(containerView)
         setAccessibilityRole(.row)
     }
@@ -183,7 +183,7 @@ extension NSUIView: NSAccessibilityGroup
     {
         return "Chart View"
     }
-
+    
     open override func accessibilityRows() -> [Any]?
     {
         return accessibilityChildren()
